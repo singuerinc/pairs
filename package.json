@@ -1,12 +1,27 @@
 {
-  "name": "openshift-cartridge-nodejs-template",
-  "version": "1.0.1",
-  "description": "Custom Node.js cartridge for OpenShift - sample application",
+  "name": "pairs-client",
+  "version": "0.1.0",
   "private": true,
-  "main": "start.js",
-  "scripts": {
-    "start": "node --use_strict start.js"
+  "main": "app.js",
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.5",
+    "redux": "^3.6.0",
+    "tachyons": "^4.7.4",
+    "express": "^4.15.3",
+    "socket.io": "^2.0.1"
   },
-  "author": "Ionut-Cristian Florescu <ionut.florescu@gmail.com>",
-  "license": "ISC"
+  "devDependencies": {
+    "react-scripts": "1.0.1"
+  },
+  "author": "singuerinc <nahuel.scotti@gmail.com>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node --use_strict app.js",
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
 }

@@ -1,45 +1,24 @@
-const http         = require('http'),
-      fs           = require('fs'),
-      path         = require('path'),
-      contentTypes = require('./utils/content-types'),
-      sysInfo      = require('./utils/sys-info'),
-      env          = process.env;
+const env = process.env;
+const express = require('express');
+const app = express();
+const path = require('path');
 
-let server = http.createServer(function (req, res) {
-  let url = req.url;
-  if (url == '/') {
-    url += 'index.html';
-  }
+app.use(express.static(path.resolve(__dirname, "build")));
 
-  // IMPORTANT: Your application HAS to respond to GET /health with status 200
-  //            for OpenShift health monitoring
-
-  if (url == '/health') {
-    res.writeHead(200);
-    res.end();
-  } else if (url == '/info/gen' || url == '/info/poll') {
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Cache-Control', 'no-cache, no-store');
-    res.end(JSON.stringify(sysInfo[url.slice(6)]()));
-  } else {
-    fs.readFile('./static' + url, function (err, data) {
-      if (err) {
-        res.writeHead(404);
-        res.end('Not found');
-      } else {
-        let ext = path.extname(url).slice(1);
-        if (contentTypes[ext]) {
-          res.setHeader('Content-Type', contentTypes[ext]);
-        }
-        if (ext === 'html') {
-          res.setHeader('Cache-Control', 'no-cache, no-store');
-        }
-        res.end(data);
-      }
-    });
-  }
+app.get('/health', (req, res) => {
+    res.status(200).end();
 });
 
-server.listen(env.NODE_PORT || 3000, env.NODE_IP || 'localhost', function () {
-  console.log(`Application worker ${process.pid} started...`);
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+io.on('connection', function (socket) {
+    socket.on('cell', function (cell) {
+        io.emit('cell', cell);
+    });
+    socket.on('disconnect', function () {
+    });
+});
+
+server.listen(env.NODE_PORT || 3001, env.NODE_IP || 'localhost', function () {
+    console.log(`Application worker ${process.pid} started...`);
 });
