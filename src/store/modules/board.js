@@ -1,13 +1,14 @@
-// import * as types from '../mutation-types';
+import * as types from '../mutation-types';
 
 const state = {
-  added: [],
-  checkoutStatus: null,
+  cells: new Array(10),
+  selectedCells: [],
 };
 
 // getters
 const getters = {
-  // checkoutStatus: state => state.checkoutStatus,
+  selectedCells: () => state.selectedCells,
+  cells: () => state.cells,
 };
 
 // actions
@@ -25,18 +26,9 @@ const actions = {
 
 // mutations
 const mutations = {
-  // [types.ADD_TO_CART](state, { id }) {
-  //   state.lastCheckout = null;
-  //   const record = state.added.find(p => p.id === id);
-  //   if (!record) {
-  //     state.added.push({
-  //       id,
-  //       quantity: 1,
-  //     });
-  //   } else {
-  //     record.quantity++;
-  //   }
-  // },
+  [types.UPDATE_NUM_CELLS](_state, { numCells }) {
+    _state.cells = new Array(numCells);
+  },
 };
 
 export default {

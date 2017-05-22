@@ -13,7 +13,7 @@ export default new Router({
       component: Hello,
     },
     {
-      path: '/board',
+      path: '/board/:cells',
       name: 'Board',
       component: Board,
     },

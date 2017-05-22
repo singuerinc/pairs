@@ -5,6 +5,9 @@
 </template>
 
 <script>
+import 'open-color/open-color.css';
+import 'tachyons/css/tachyons.css';
+
 export default {
   name: 'app',
 };
