@@ -7,9 +7,16 @@
     </div>
     <div class="w-100 db">
       <div class="tc">
-        <h1 class="f2 mv1 near-black normal ttu">Find 2 cells with the same color</h1>
+        <h1 class="f2 mv1 near-black normal ttu">Find 2 cells with the same color {{selectedCells}}</h1>
         <ul class="list w-100 ma0 pa0 cf">
-          <Cell v-for="idx in board.cells" :key="idx" :idx="idx" :color="getColor()" :size="cellSize"></Cell>
+          <Cell v-for="(item, idx) in cells"
+                v-bind:select="select"
+                v-bind:key="idx"
+                v-bind:idx="idx"
+                v-bind:color="getColor()"
+                v-bind:size="cellSize"
+                v-bind:class="{'selected': selectedCells.indexOf(idx) !== -1}"
+          ></Cell>
         </ul>
       </div>
     </div>
@@ -20,7 +27,7 @@
   import { mapState } from 'vuex';
   import router from '../router';
   import store from '../store';
-  import { UPDATE_NUM_CELLS, USER_TYPE } from '../store/mutation-types';
+  import { UPDATE_NUM_CELLS, USER_TYPE, SELECTED_CELLS } from '../store/mutation-types';
   import Cell from './Cell';
 
   export default {
@@ -41,7 +48,7 @@
       store.commit(USER_TYPE, { userType: cells });
       store.commit(UPDATE_NUM_CELLS, { numCells: cells });
 
-      this.colors = store.state.board.colors;
+      this.colors = store.getters.colors;
     },
     methods: {
       goHome: () => {
@@ -50,13 +57,18 @@
       getColor() {
         return this.colors.shift();
       },
+      select(cell) {
+        const cells = this.selectedCells.concat([cell.idx]);
+        store.commit(SELECTED_CELLS, { cells });
+      },
     },
     computed: {
       ...mapState([
-        'board',
+        'cells',
+        'selectedCells',
       ]),
       cellSize() {
-        switch (this.board.cells.length) {
+        switch (this.cells.length) {
           case 20:
             return 'w-10';
           case 50:
