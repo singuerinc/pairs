@@ -1,10 +1,15 @@
 <template>
-  <div class="tc w-100 pa3">
-    <div class="vh-100 w-100 dt">
-      <div class="v-mid dtc tc">
-        <h1 class="f1 ma0 mb4 near-black normal">Play!</h1>
-        <ul class="list w-100 ma0 pa0">
-          <Cell v-for="idx in board.cells" :key="idx" :idx="idx" :size="cellSize"></Cell>
+  <div class="w-100 pa3">
+    <div class="w-100 dt near-black bg-black-10 h2">
+      <div class="w-20 v-mid dtc ph3">P1</div>
+      <div class="w-60 v-mid dtc ph3 tc pointer" v-on:click="goHome()">Pairs</div>
+      <div class="w-20 v-mid dtc ph3 tr">P2</div>
+    </div>
+    <div class="w-100 db">
+      <div class="tc">
+        <h1 class="f2 mv1 near-black normal ttu">Find 2 cells with the same color</h1>
+        <ul class="list w-100 ma0 pa0 cf">
+          <Cell v-for="idx in board.cells" :key="idx" :idx="idx" :color="getColor()" :size="cellSize"></Cell>
         </ul>
       </div>
     </div>
@@ -15,7 +20,7 @@
   import { mapState } from 'vuex';
   import router from '../router';
   import store from '../store';
-  import { UPDATE_NUM_CELLS } from '../store/mutation-types';
+  import { UPDATE_NUM_CELLS, USER_TYPE } from '../store/mutation-types';
   import Cell from './Cell';
 
   export default {
@@ -25,8 +30,26 @@
     components: {
       Cell,
     },
+    data() {
+      return {
+        colors: null,
+      };
+    },
     created() {
-      store.commit(UPDATE_NUM_CELLS, { numCells: parseInt(this.$route.params.cells, 10) });
+      const cells = parseInt(this.$route.params.cells, 10);
+
+      store.commit(USER_TYPE, { userType: cells });
+      store.commit(UPDATE_NUM_CELLS, { numCells: cells });
+
+      this.colors = store.state.board.colors;
+    },
+    methods: {
+      goHome: () => {
+        router.push('/');
+      },
+      getColor() {
+        return this.colors.shift();
+      },
     },
     computed: {
       ...mapState([

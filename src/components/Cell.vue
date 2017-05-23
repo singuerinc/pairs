@@ -9,27 +9,10 @@
 <script>
   export default {
     name: 'cell',
-    props: ['idx', 'size'],
+    props: ['idx', 'size', 'color'],
     computed: {
       getColor() {
-        const colorNames = [
-          'gray',
-          'red',
-//          'pink',
-//          'grape',
-//          'violet',
-//          'indigo',
-//          'blue',
-//          'cyan',
-          'teal',
-//          'green',
-//          'lime',
-//          'yellow',
-//          'orange',
-        ];
-        const randomName = () => colorNames[Math.floor(Math.random() * colorNames.length)];
-        const randomNum = () => Math.floor(Math.random() * 10);
-        return `background-color: var(--oc-${randomName()}-${randomNum()});`;
+        return `background-color: var(${this.color});`;
       },
     },
   };

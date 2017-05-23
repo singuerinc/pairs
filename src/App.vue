@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="sans-serif">
+  <div id="app" class="sans-serif near-white">
     <router-view></router-view>
   </div>
 </template>
