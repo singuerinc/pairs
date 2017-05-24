@@ -4,9 +4,10 @@
   "description": "Pairs game",
   "author": "singuerinc <nahuel.scotti@gmail.com>",
   "private": true,
+  "main": "start.js",
   "scripts": {
+    "start": "npm i && node --use_strict start.js",
     "dev": "node build/dev-server.js",
-    "start": "node build/dev-server.js",
     "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src"
   },
