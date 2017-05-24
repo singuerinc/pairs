@@ -41,6 +41,7 @@
     },
     data() {
       return {
+        blocked: true,
         message: 'OK, let\'s go! Find 2 cells with the same color.',
         colors: null,
         totalCellsToComplete: null,
@@ -75,6 +76,7 @@
         this.completedCells = [];
         this.totalCellsToComplete = numCells;
         this.colors = store.getters.colors;
+        this.blocked = false;
       },
       isWin() {
         const [cell0, cell1] = this.selectedCells;
@@ -86,7 +88,7 @@
         return this.completedCells.length === this.totalCellsToComplete;
       },
       select(cell) {
-        if (this.isBoardComplete()) {
+        if (this.isBoardComplete() || this.blocked) {
           return;
         }
 
@@ -99,22 +101,29 @@
         if (this.selectedCells.length === 2) {
           let waitBeforeContinue = 1000;
           if (this.isWin()) {
+            this.blocked = true;
             this.message = 'Yay!, great!';
             this.selectedCells.forEach((c) => {
               this.completedCells.push(c);
             });
-            waitBeforeContinue = 0;
+            waitBeforeContinue = 1;
 
             if (this.isBoardComplete()) {
+              this.blocked = true;
               this.message = 'Wonderful! Game over.';
               setTimeout(() => {
                 this.startNewGame();
                 this.goHome();
+                this.blocked = false;
               }, 2000);
+            } else {
+              store.commit(SELECTED_CELLS, { cells: [] });
+              this.blocked = false;
             }
           } else {
             setTimeout(() => {
               this.message = 'Find 2 cells with the same color.';
+              this.blocked = false;
               store.commit(SELECTED_CELLS, { cells: [] });
             }, waitBeforeContinue);
           }
