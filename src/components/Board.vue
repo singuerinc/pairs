@@ -13,7 +13,7 @@
                 v-bind:select="select"
                 v-bind:key="idx"
                 v-bind:idx="idx"
-                v-bind:color="getColor()"
+                v-bind:color="getColor(idx)"
                 v-bind:size="cellSize"
                 v-bind:class="{'selected': selectedCells.indexOf(idx) !== -1}"
           ></Cell>
@@ -54,8 +54,8 @@
       goHome: () => {
         router.push('/');
       },
-      getColor() {
-        return this.colors.shift();
+      getColor(idx) {
+        return this.colors[idx];
       },
       select(cell) {
         const cells = this.selectedCells.concat([cell.idx]);
