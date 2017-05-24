@@ -70,6 +70,7 @@
 
         store.commit(USER_TYPE, { userType: numCells });
         store.commit(UPDATE_NUM_CELLS, { numCells });
+        store.commit(SELECTED_CELLS, { cells: [] });
 
         this.completedCells = [];
         this.totalCellsToComplete = numCells;
@@ -107,10 +108,9 @@
             if (this.isBoardComplete()) {
               this.message = 'Wonderful! Game over.';
               setTimeout(() => {
+                this.startNewGame();
                 this.goHome();
               }, 2000);
-            } else {
-              store.commit(SELECTED_CELLS, { cells: [] });
             }
           } else {
             setTimeout(() => {
