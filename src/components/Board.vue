@@ -1,22 +1,23 @@
 <template>
   <div class="w-100 pa3">
-    <div class="w-100 dt near-black bg-black-10 h2">
+    <div class="w-100 dt near-black h2">
       <div class="w-20 v-mid dtc ph3">P1</div>
       <div class="w-60 v-mid dtc ph3 tc pointer" v-on:click="goHome()">Pairs</div>
       <div class="w-20 v-mid dtc ph3 tr">P2</div>
     </div>
     <div class="w-100 db">
       <div class="tc">
-        <h1 class="f2 mv1 near-black normal ttu">Find 2 cells with the same color</h1>
+        <h1 class="f2 mt2 mb3 black-30 normal">{{message}}</h1>
         <ul class="list w-100 ma0 pa0 cf">
           <Cell v-for="(item, idx) in cells"
                 v-bind:select="select"
                 v-bind:key="idx"
                 v-bind:idx="idx"
+                v-bind:completed="isCompleted(idx)"
                 v-bind:color="getColor(idx)"
                 v-bind:size="cellSize"
                 v-bind:selected="isSelected(idx)"
-                v-bind:class="{'ba bw2 b--black': isSelected(idx)}"
+                v-bind:class="{'ba b--white': isSelected(idx)}"
           ></Cell>
         </ul>
       </div>
@@ -40,16 +41,14 @@
     },
     data() {
       return {
+        message: 'OK, let\'s go! Find 2 cells with the same color.',
         colors: null,
+        totalCellsToComplete: null,
+        completedCells: null,
       };
     },
     created() {
-      const cells = parseInt(this.$route.params.cells, 10);
-
-      store.commit(USER_TYPE, { userType: cells });
-      store.commit(UPDATE_NUM_CELLS, { numCells: cells });
-
-      this.colors = store.getters.colors;
+      this.startNewGame();
     },
     methods: {
       goHome: () => {
@@ -58,9 +57,23 @@
       getColor(idx) {
         return this.colors[idx];
       },
+      isCompleted(idx) {
+        const match = this.completedCells.find(cell => cell.idx === idx);
+        return typeof match !== 'undefined';
+      },
       isSelected(idx) {
         const match = this.selectedCells.find(cell => cell.idx === idx);
         return typeof match !== 'undefined';
+      },
+      startNewGame() {
+        const numCells = parseInt(this.$route.params.cells, 10);
+
+        store.commit(USER_TYPE, { userType: numCells });
+        store.commit(UPDATE_NUM_CELLS, { numCells });
+
+        this.completedCells = [];
+        this.totalCellsToComplete = numCells;
+        this.colors = store.getters.colors;
       },
       isWin() {
         const [cell0, cell1] = this.selectedCells;
@@ -68,7 +81,14 @@
 
         return equals;
       },
+      isBoardComplete() {
+        return this.completedCells.length === this.totalCellsToComplete;
+      },
       select(cell) {
+        if (this.isBoardComplete()) {
+          return;
+        }
+
         if (cell.selected) return;
         if (this.selectedCells.length === 2) return;
 
@@ -78,14 +98,26 @@
         if (this.selectedCells.length === 2) {
           let waitBeforeContinue = 1000;
           if (this.isWin()) {
+            this.message = 'Yay!, great!';
             this.selectedCells.forEach((c) => {
-              c.complete = true;
+              this.completedCells.push(c);
             });
             waitBeforeContinue = 0;
+
+            if (this.isBoardComplete()) {
+              this.message = 'Wonderful! Game over.';
+              setTimeout(() => {
+                this.goHome();
+              }, 2000);
+            } else {
+              store.commit(SELECTED_CELLS, { cells: [] });
+            }
+          } else {
+            setTimeout(() => {
+              this.message = 'Find 2 cells with the same color.';
+              store.commit(SELECTED_CELLS, { cells: [] });
+            }, waitBeforeContinue);
           }
-          setTimeout(() => {
-            store.commit(SELECTED_CELLS, { cells: [] });
-          }, waitBeforeContinue);
         }
       },
     },
