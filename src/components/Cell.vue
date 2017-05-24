@@ -1,5 +1,9 @@
 <template xmlns:v-bind="http://www.w3.org/1999/xhtml">
-  <li class="fl ma0 pa0 ba" v-on:click.stop="clickHandler()" v-bind:style="getColor" v-bind:class="size">
+  <li class="fl ma0 pa0 ba"
+      v-on:click.stop="clickHandler()"
+      v-bind:style="getColor"
+      v-bind:class="[{'ba bw2 b--red': isCompleted}, size]"
+  >
     <div class="aspect-ratio aspect-ratio--1x1">
       <h1 class="ma0 aspect-ratio--object"></h1>
     </div>
@@ -9,10 +13,24 @@
 <script>
   export default {
     name: 'cell',
-    props: ['color', 'idx', 'size', 'select'],
+    props: ['color', 'idx', 'size', 'select', 'selected'],
+    data() {
+      return {
+        complete: false,
+      };
+    },
     computed: {
       getColor() {
-        return `background-color: var(${this.color});`;
+        if (this.isCompleted || this.isSelected) {
+          return `background-color: var(${this.color});`;
+        }
+        return 'background-color: white;';
+      },
+      isSelected() {
+        return this.selected;
+      },
+      isCompleted() {
+        return this.complete;
       },
     },
     methods: {
@@ -24,7 +42,4 @@
 </script>
 
 <style scoped>
-  .selected {
-    border-color: black;
-  }
 </style>
