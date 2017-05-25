@@ -24,6 +24,7 @@
           return `background-color: var(${this.color});`;
         }
         return 'background-color: #111111;';
+//        return `background-color: var(${this.color});`;
       },
       isSelected() {
         return this.selected;

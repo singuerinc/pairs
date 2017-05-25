@@ -12,6 +12,7 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "animejs": "^2.0.2",
     "open-color": "^1.5.1",
     "tachyons": "^4.7.4",
     "vue": "^2.2.6",

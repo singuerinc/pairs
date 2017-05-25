@@ -1,13 +1,22 @@
 <template>
   <div class="w-100 pa3">
     <div class="w-100 dt near-black h2">
-      <div class="w-20 v-mid dtc ph3">P1</div>
-      <div class="w-60 v-mid dtc ph3 tc pointer" v-on:click="goHome()">Pairs</div>
-      <div class="w-20 v-mid dtc ph3 tr">P2</div>
+      <div class="w-20 v-mid dtc pa2 bl bw2 b--red bg-white"
+           v-bind:class="{'b--green': currentPlayer === player1}"
+      ><span class="bg-near-black near-white ph3 pv2 ml0 mr2">{{player1.getPoints()}}</span>{{player1.getName()}}
+      </div>
+      <div class="w-60 v-mid dtc tc pointer" v-on:click="goHome()">Pairs</div>
+      <div class="w-20 v-mid dtc pa2 br bw2 b--red tr"
+           v-bind:class="{'b--green': currentPlayer === player2}"
+      >{{player2.getName()}}<span class="bg-near-black near-white ph3 pv2 mr0 ml2">{{player2.getPoints()}}</span></div>
     </div>
     <div class="w-100 db">
       <div class="tc">
-        <h1 class="f2 mt2 mb3 black-30 normal">{{message}}</h1>
+        <h1 class="f4 f2-l mt2 mb3 black-30 normal">
+          <span>{{message}}</span>
+          <span class="f4 f2-l near-black" v-show="currentPlayer.pointsToAddOrRemove > 0">+{{10 - currentPlayer.pointsToAddOrRemove}}</span>
+          <span class="near-black link pointer red" v-on:click="startNewGame()" v-show="isBoardComplete()">Start a new game</span>
+        </h1>
         <ul class="list w-100 ma0 pa0 cf">
           <Cell v-for="(item, idx) in cells"
                 v-bind:select="select"
@@ -27,6 +36,7 @@
 
 <script>
   import { mapState } from 'vuex';
+  import Player from '../store/player';
   import router from '../router';
   import store from '../store';
   import { UPDATE_NUM_CELLS, USER_TYPE, SELECTED_CELLS } from '../store/mutation-types';
@@ -41,8 +51,11 @@
     },
     data() {
       return {
+        player1: null,
+        player2: null,
+        currentPlayer: null,
         blocked: true,
-        message: 'OK, let\'s go! Find 2 cells with the same color.',
+        message: '',
         colors: null,
         totalCellsToComplete: null,
         completedCells: null,
@@ -66,7 +79,29 @@
         const match = this.selectedCells.find(cell => cell.idx === idx);
         return typeof match !== 'undefined';
       },
+      getNextPlayer() {
+        if (this.currentPlayer === null) {
+          return this.player1;
+        }
+        if (this.currentPlayer === this.player1) {
+          return this.player2;
+        }
+        return this.player1;
+      },
+      getWinner() {
+        if (this.player1.getPoints() > this.player2.getPoints()) {
+          return this.player1;
+        } else if (this.player1.getPoints() < this.player2.getPoints()) {
+          return this.player2;
+        }
+        return null;
+      },
       startNewGame() {
+        this.player1 = new Player('Player 1');
+        this.player2 = new Player('P2');
+        this.currentPlayer = this.getNextPlayer();
+        this.message = 'OK, let\'s go! Find 2 cells with the same color.';
+
         const numCells = parseInt(this.$route.params.cells, 10);
 
         store.commit(USER_TYPE, { userType: numCells });
@@ -87,13 +122,13 @@
       isBoardComplete() {
         return this.completedCells.length === this.totalCellsToComplete;
       },
+      canPlay() {
+        return !this.isBoardComplete() && !this.blocked && this.selectedCells.length < 2;
+      },
       select(cell) {
-        if (this.isBoardComplete() || this.blocked) {
+        if (!this.canPlay() || cell.selected) {
           return;
         }
-
-        if (cell.selected) return;
-        if (this.selectedCells.length === 2) return;
 
         const cells = this.selectedCells.concat([cell]);
         store.commit(SELECTED_CELLS, { cells });
@@ -101,6 +136,7 @@
         if (this.selectedCells.length === 2) {
           let waitBeforeContinue = 1000;
           if (this.isWin()) {
+            this.currentPlayer.addPoints();
             this.blocked = true;
             this.message = 'Yay!, great!';
             this.selectedCells.forEach((c) => {
@@ -109,20 +145,24 @@
             waitBeforeContinue = 1;
 
             if (this.isBoardComplete()) {
+              const winner = this.getWinner();
+              let winMessage;
+              if (winner !== null) {
+                winMessage = `${winner.getName()} wins!`;
+              } else {
+                winMessage = 'Game over, no winner today!';
+              }
               this.blocked = true;
-              this.message = 'Wonderful! Game over.';
-              setTimeout(() => {
-                this.startNewGame();
-                this.goHome();
-                this.blocked = false;
-              }, 2000);
+              this.message = winMessage;
             } else {
               store.commit(SELECTED_CELLS, { cells: [] });
               this.blocked = false;
             }
           } else {
+            this.currentPlayer.removePoints();
             setTimeout(() => {
-              this.message = 'Find 2 cells with the same color.';
+              this.currentPlayer = this.getNextPlayer();
+              this.message = 'Ouch!';
               this.blocked = false;
               store.commit(SELECTED_CELLS, { cells: [] });
             }, waitBeforeContinue);
