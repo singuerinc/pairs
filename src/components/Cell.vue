@@ -1,11 +1,10 @@
 <template xmlns:v-bind="http://www.w3.org/1999/xhtml">
-  <li class="fl ma0 pa0 ba b--white"
+  <li class="fl w-third w-10-ns pa1"
       v-on:click.stop="clickHandler()"
-      v-bind:style="getColor"
-      v-bind:class="[{'': isCompleted}, size]"
+      v-bind:class="[{'': isCompleted}]"
   >
     <div class="aspect-ratio aspect-ratio--1x1">
-      <h1 class="ma0 aspect-ratio--object"></h1>
+      <div class="bg-pattern ma0 aspect-ratio--object" v-bind:style="getColor"></div>
     </div>
   </li>
 </template>
@@ -21,9 +20,9 @@
     computed: {
       getColor() {
         if (this.isCompleted || this.isSelected) {
-          return `background-color: var(${this.color});`;
+          return `background-color: var(${this.color}); background-image: none;`;
         }
-        return 'background-color: #111111;';
+        return 'background-color: none;';
 //        return `background-color: var(${this.color});`;
       },
       isSelected() {
@@ -42,4 +41,9 @@
 </script>
 
 <style scoped>
+  .bg-pattern {
+    background-image: url('../../static/geometry2.png');
+    background-size: 100%;
+    background-position: center;
+  }
 </style>

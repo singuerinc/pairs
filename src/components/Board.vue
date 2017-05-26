@@ -1,14 +1,19 @@
 <template>
-  <div class="w-100 pa3">
+  <div class="w-100 ph3">
+    <div class="w-100 db near-black mv3 tc pointer" v-on:click="goHome()">Pairs</div>
     <div class="w-100 dt near-black h2">
-      <div class="w-20 v-mid dtc pa2 bl bw2 b--red bg-white"
-           v-bind:class="{'b--green': currentPlayer === player1}"
-      ><span class="bg-near-black near-white ph3 pv2 ml0 mr2">{{player1.getPoints()}}</span>{{player1.getName()}}
+      <div class="w-50 v-mid dtc pa2 bg-white">
+        <span class="bg-near-black near-white ph3 pv2 ml0 mr2"
+              v-bind:class="{'bg-green': currentPlayer === player1}"
+        >{{player1.getPoints()}}</span>
+        <span>{{player1.getName()}}</span>
       </div>
-      <div class="w-60 v-mid dtc tc pointer" v-on:click="goHome()">Pairs</div>
-      <div class="w-20 v-mid dtc pa2 br bw2 b--red tr"
-           v-bind:class="{'b--green': currentPlayer === player2}"
-      >{{player2.getName()}}<span class="bg-near-black near-white ph3 pv2 mr0 ml2">{{player2.getPoints()}}</span></div>
+      <div class="w-50 v-mid dtc pa2 tr">
+        <span>{{player2.getName()}}</span>
+        <span class="bg-near-black near-white ph3 pv2 mr0 ml2"
+              v-bind:class="{'bg-green': currentPlayer === player2}"
+        >{{player2.getPoints()}}</span>
+      </div>
     </div>
     <div class="w-100 db">
       <div class="tc">
@@ -17,7 +22,7 @@
           <span class="f4 f2-l near-black" v-show="currentPlayer.pointsToAddOrRemove > 0">+{{10 - currentPlayer.pointsToAddOrRemove}}</span>
           <span class="near-black link pointer red" v-on:click="startNewGame()" v-show="isBoardComplete()">Start a new game</span>
         </h1>
-        <ul class="list w-100 ma0 pa0 cf">
+        <ul class="list w-100 tc">
           <Cell v-for="(item, idx) in cells"
                 v-bind:select="select"
                 v-bind:key="idx"
