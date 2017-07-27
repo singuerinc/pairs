@@ -1,21 +1,15 @@
-# pairs
+# Pairs
 
-> Pairs game
+A memory game
 
-## Build Setup
+[Demo](https://singuerinc-labs.gitlab.io/pairs/)
 
-``` bash
-# install dependencies
-npm install
+![Pairs](./pairs.png)
 
-# serve with hot reload at localhost:8080
-npm run dev
+## Tech
 
-# build for production with minification
-npm run build
+I was using this project as a fun way to learn a bit more about [Vue.js](https://vuejs.org/)
 
-# build for production and view the bundle analyzer report
-npm run build --report
-```
+## License
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
