@@ -1,9 +1,8 @@
-image: node:7-slim
+image: node:latest
 
 pages:
   stage: deploy
   script:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
   - yarn
   - yarn run build
   artifacts:
