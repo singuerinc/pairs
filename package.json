@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "animejs": "^2.0.2",
-    "open-color": "^1.5.1",
+    "open-color": "^1.8.0",
     "tachyons": "^4.7.4",
     "vue": "^2.2.6",
     "vue-router": "^2.3.1",
